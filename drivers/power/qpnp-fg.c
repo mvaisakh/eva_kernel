@@ -1872,6 +1872,11 @@ out:
 	if (ret)
 		pr_err("failed to reset IMA access bit ret = %d\n", ret);
 
+	if (rc) {
+		mutex_unlock(&chip->rw_lock);
+		goto exit;
+	}
+
 	if (retry) {
 		retry = false;
 		goto retry;
