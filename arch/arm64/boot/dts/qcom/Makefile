@@ -1,3 +1,11 @@
+ifeq ($(CONFIG_MMI_DTB), y)
+
+ifeq ($(CONFIG_CEDRIC_DTB),y)
+dtb-$(CONFIG_ARCH_MSM8937) += msm8937-cedric-p0a.dtb
+endif
+
+else
+
 dtb-$(CONFIG_ARCH_QCOM)	+= apq8016-sbc.dtb msm8916-mtp.dtb
 dtb-$(CONFIG_ARCH_QCOM)	+= msm8996-mtp.dtb
 dtb-$(CONFIG_ARCH_QCOM)	+= apq8096-db820c.dtb
@@ -602,6 +610,7 @@ dtb-$(CONFIG_ARCH_SDM429) += sdm429-mtp.dtb \
 	sda429-cdp.dtb
 
 endif
+endif #CONFIG_MMI_DTB
 
 always		:= $(dtb-y)
 subdir-y	:= $(dts-dirs)
