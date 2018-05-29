@@ -714,12 +714,27 @@ enum mhi_client_channel {
 #define MHI_DEV_UEVENT_CTRL	0
 
 struct mhi_dev_uevent_info {
+	enum mhi_client_channel	channel;
 	enum mhi_ctrl_info	ctrl_info;
 };
 
 struct mhi_dev_iov {
 	void		*addr;
 	uint32_t	buf_size;
+};
+
+struct mhi_dev_client_cb_data {
+	void			*user_data;
+	enum mhi_client_channel	channel;
+	enum mhi_ctrl_info	ctrl_info;
+};
+
+typedef void (*mhi_state_cb)(struct mhi_dev_client_cb_data *cb_dat);
+
+struct mhi_dev_ready_cb_info {
+	struct list_head		list;
+	mhi_state_cb			cb;
+	struct mhi_dev_client_cb_data	cb_data;
 };
 
 /**
@@ -1246,4 +1261,11 @@ int mhi_ctrl_state_info(uint32_t idx, uint32_t *info);
 
 void uci_ctrl_update(struct mhi_dev_client_cb_reason *reason);
 
+/**
+ * mhi_register_state_cb() - Clients can register and receive callback after
+ *		MHI channel is connected or disconnected.
+ */
+int mhi_register_state_cb(void (*mhi_state_cb)
+			(struct mhi_dev_client_cb_data *cb_data), void *data,
+			enum mhi_client_channel channel);
 #endif /* _MHI_H_ */
