@@ -985,16 +985,15 @@ static int uci_init_client_attributes(struct mhi_uci_ctxt_t *uci_ctxt)
 		default:
 			chan_attrib->uci_ownership = 0;
 			break;
-		}
-		if (chan_attrib->uci_ownership) {
-			chan_attrib->chan_id = i;
-			chan_attrib->max_packet_size = data_size;
-			index = CHAN_TO_CLIENT(i);
-			client = &uci_ctxt->client_handles[index];
-			chan_attrib->nr_trbs = 9;
-			client->in_buf_list =
-			      kmalloc(sizeof(struct mhi_dev_iov) *
-					      chan_attrib->nr_trbs,
+		index = CHAN_TO_CLIENT(chan_attrib->chan_id);
+		client = &uci_ctxt->client_handles[index];
+		client->out_chan_attr = chan_attrib;
+		client->in_chan_attr = ++chan_attrib;
+		client->in_chan = index * 2;
+		client->out_chan = index * 2 + 1;
+		client->in_buf_list =
+			kcalloc(chan_attrib->nr_trbs,
+					sizeof(struct mhi_dev_iov),
 					GFP_KERNEL);
 			if (NULL == client->in_buf_list)
 				return -ENOMEM;
@@ -1051,8 +1050,6 @@ static int mhi_register_client(struct uci_client *mhi_client, int index)
 {
 	init_waitqueue_head(&mhi_client->read_wq);
 	init_waitqueue_head(&mhi_client->write_wq);
-	mhi_client->out_chan = index * 2 + 1;
-	mhi_client->in_chan = index * 2;
 	mhi_client->client_index = index;
 
 	mutex_init(&mhi_client->in_chan_lock);
