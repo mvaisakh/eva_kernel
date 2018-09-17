@@ -407,10 +407,18 @@ int bgcom_ahb_write(void *handle, uint32_t ahb_start_addr,
 
 	size = num_words*BG_SPI_WORD_SIZE;
 	txn_len = BG_SPI_AHB_CMD_LEN + size;
+	if (fxd_mem_buffer != NULL && txn_len <= CMA_BFFR_POOL_SIZE) {
+		memset(fxd_mem_buffer, 0, txn_len);
+		tx_buf = fxd_mem_buffer;
+		is_cma_used = true;
+	} else {
+		pr_info("DMA memory used for size[%d]\n", txn_len);
+		tx_buf = dma_zalloc_coherent(&spi->dev, txn_len,
+						&dma_hndl, GFP_KERNEL);
+	}
 
-	tx_buf = kzalloc(txn_len, GFP_KERNEL);
-
-	if (!tx_buf)
+	if (!tx_buf) {
+		mutex_unlock(&cma_buffer_lock);
 		return -ENOMEM;
 
 	cmnd |= BG_SPI_AHB_WRITE_CMD;
