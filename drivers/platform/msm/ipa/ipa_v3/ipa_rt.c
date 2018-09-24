@@ -1679,10 +1679,10 @@ int ipa3_reset_rt(enum ipa_ip_type ip, bool user_only)
 					hdr_entry = ipa3_id_find(
 							rule->rule.hdr_hdl);
 					if (!hdr_entry ||
-					hdr_entry->cookie != IPA_HDR_COOKIE) {
+						hdr_entry->cookie != IPA_HDR_COOKIE) {
 						IPAERR_RL(
-						"Header already deleted\n");
-						return -EINVAL;
+							"Header already deleted\n");
+							return -EINVAL;
 					}
 				} else if (rule->proc_ctx) {
 					hdr_proc_entry =
@@ -1704,8 +1704,7 @@ int ipa3_reset_rt(enum ipa_ip_type ip, bool user_only)
 						rule->proc_ctx->id);
 				rule->cookie = 0;
 				if (!rule->rule_id_valid)
-					idr_remove(&tbl->rule_ids,
-						rule->rule_id);
+					idr_remove(&tbl->rule_ids, rule->rule_id);
 				id = rule->id;
 				kmem_cache_free(ipa3_ctx->rt_rule_cache, rule);
 

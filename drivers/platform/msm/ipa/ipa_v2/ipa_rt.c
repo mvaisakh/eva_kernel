@@ -1345,23 +1345,21 @@ int ipa2_reset_rt(enum ipa_ip_type ip, bool user_only)
 				rule->ipacm_installed) {
 				list_del(&rule->link);
 				if (rule->hdr) {
-					hdr_entry = ipa_id_find(
-						rule->rule.hdr_hdl);
+					hdr_entry = ipa_id_find(rule->rule.hdr_hdl);
 					if (!hdr_entry ||
-					hdr_entry->cookie != IPA_HDR_COOKIE) {
-						IPAERR_RL(
-						"Header already deleted\n");
+						hdr_entry->cookie != IPA_HDR_COOKIE) {
+						IPAERR_RL("Header already deleted\n");
 						return -EINVAL;
 					}
 				} else if (rule->proc_ctx) {
 					hdr_proc_entry =
 						ipa_id_find(
-						rule->rule.hdr_proc_ctx_hdl);
+							rule->rule.hdr_proc_ctx_hdl);
 					if (!hdr_proc_entry ||
 						hdr_proc_entry->cookie !=
-							IPA_PROC_HDR_COOKIE) {
-					IPAERR_RL(
-						"Proc entry already deleted\n");
+						IPA_PROC_HDR_COOKIE) {
+						IPAERR_RL(
+							"Proc entry already deleted\n");
 						return -EINVAL;
 					}
 				}
