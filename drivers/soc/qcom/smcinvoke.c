@@ -198,6 +198,16 @@ static int prepare_send_scm_msg(const uint8_t *in_buf, size_t in_buf_len,
 	dmac_flush_range(out_buf, out_buf + outbuf_flush_size);
 
 	ret = scm_call2(SMCINVOKE_TZ_CMD, &desc);
+
+	/* process listener request */
+	if (!ret && (desc.ret[0] == QSEOS_RESULT_INCOMPLETE ||
+		desc.ret[0] == QSEOS_RESULT_BLOCKED_ON_LISTENER))
+		ret = qseecom_process_listener_from_smcinvoke(&desc);
+
+	mutex_lock(&smcinvoke_lock);
+	set_msm_bus_request_locked(BW_INACTIVE);
+	mutex_unlock(&smcinvoke_lock);
+
 	*smcinvoke_result = (int32_t)desc.ret[1];
 	if (ret || desc.ret[1] || desc.ret[2] || desc.ret[0]) {
 		pr_err("SCM call failed with ret val = %d %d %d %d\n",
