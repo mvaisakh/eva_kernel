@@ -98,6 +98,7 @@ struct msm_hsic_hcd {
 	uint32_t		bus_perf_client;
 	uint32_t		wakeup_int_cnt;
 
+	struct work_struct	runtime_pm_allow_w;
 	struct work_struct	bus_vote_w;
 	bool			bus_vote;
 
@@ -1026,6 +1027,16 @@ skip_phy_resume:
 }
 #endif
 
+static void ehci_hsic_runtime_pm_allow_w(struct work_struct *w)
+{
+	struct msm_hsic_hcd *mehci =
+		container_of(w, struct msm_hsic_hcd, runtime_pm_allow_w);
+	struct usb_hcd *hcd = hsic_to_hcd(mehci);
+
+	pr_debug("enable runtime PM for HSIC rhub\n");
+	pm_runtime_allow(&hcd->self.root_hub->dev);
+}
+
 static void ehci_hsic_bus_vote_w(struct work_struct *w)
 {
 	struct msm_hsic_hcd *mehci =
@@ -1113,6 +1124,13 @@ static irqreturn_t msm_hsic_irq(struct usb_hcd *hcd)
 
 		complete(&mehci->gpt0_completion);
 		ehci_writel(ehci, STS_GPTIMER0_INTERRUPT, &ehci->regs->status);
+	}
+
+	/* Allow RuntimePM if device connected */
+	if (!runtime_pm_enabled && (readl_relaxed(USB_PORTSC) & PORT_PE)) {
+		pr_debug("queue runtime_pm allow work\n");
+		queue_work(ehci_wq, &mehci->runtime_pm_allow_w);
+		runtime_pm_enabled = true;
 	}
 
 	return ehci_irq(hcd);
@@ -2159,6 +2177,7 @@ static int ehci_hsic_msm_probe(struct platform_device *pdev)
 	}
 
 	INIT_WORK(&mehci->bus_vote_w, ehci_hsic_bus_vote_w);
+	INIT_WORK(&mehci->runtime_pm_allow_w, ehci_hsic_runtime_pm_allow_w);
 
 	ret = usb_add_hcd(hcd, hcd->irq, IRQF_SHARED);
 	if (ret) {
@@ -2305,6 +2324,8 @@ static int ehci_hsic_msm_remove(struct platform_device *pdev)
 
 	if (pdata && pdata->consider_ipa_handshake)
 		msm_bam_set_hsic_host_dev(NULL);
+
+	cancel_work_sync(&mehci->runtime_pm_allow_w);
 
 	/* If the device was removed no need to call pm_runtime_disable */
 	if (pdev->dev.power.power_state.event != PM_EVENT_INVALID)
