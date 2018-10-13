@@ -732,3 +732,7 @@ config VMAP_ZERO
 	help
 	   "vmap_zero()" will help kernel modules to zero big memory block.
 	   It will reserve a big vmalloc area dedicated to zero pages.
+
+config VMSTAT_INTERVAL
+	int "Default interval in seconds to update vmstat"
+	default 1
