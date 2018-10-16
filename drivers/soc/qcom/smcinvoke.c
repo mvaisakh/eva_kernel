@@ -101,6 +101,130 @@ static inline size_t size_align(size_t a, size_t b)
 	return size_add(a, pad_size(a, b));
 }
 
+static void disable_clocks(void)
+{
+	int i;
+
+	if (g_clk.clk_access_cnt == 0 || --g_clk.clk_access_cnt > 0)
+		return;
+
+	for (i = CE_MAX_CLK; i > 0; i--)
+		SMCINVOKE_DISABLE_CLK(g_clk.clks[i-1]);
+}
+
+static int enable_clocks(void)
+{
+	int rc = 0, i, j;
+
+	if (g_clk.clk_access_cnt > 0)
+		goto out;
+
+	for (i = 0; i < CE_MAX_CLK; i++) {
+		if (g_clk.clks[i]) {
+			rc = clk_prepare_enable(g_clk.clks[i]);
+			if (rc) {
+				pr_err("Err %d enabling %s", rc, clk_names[i]);
+				break;
+			}
+		}
+	}
+	if (rc) {
+		for (j = i-1; j >= 0; j--)
+			SMCINVOKE_DISABLE_CLK(g_clk.clks[j]);
+		return rc;
+	}
+out:
+	g_clk.clk_access_cnt++;
+	return rc;
+}
+
+static int set_msm_bus_request_locked(enum bandwidth_request_mode mode)
+{
+	int ret = 0;
+
+	if (support_clocks == 0)
+		return ret;
+
+	if (g_clk.clks[CE_CORE_SRC_CLK] == NULL) {
+		pr_err("%s clock NULL\n", __func__);
+		return ret;
+	}
+
+	if (mode == BW_INACTIVE) {
+		disable_clocks();
+	} else {
+		ret = enable_clocks();
+		if (ret)
+			goto out;
+	}
+
+	if (current_mode != mode) {
+		ret = msm_bus_scale_client_update_request(
+					qsee_perf_client, mode);
+		if (ret) {
+			pr_err("BW req failed(%d) MODE (%d)\n", ret, mode);
+			if (mode == BW_INACTIVE)
+				enable_clocks();
+			else
+				disable_clocks();
+			goto out;
+		}
+		current_mode = mode;
+	}
+out:
+	return ret;
+}
+
+static void deinit_clocks(void)
+{
+	int i;
+
+	for (i = CE_MAX_CLK; i > 0; i--)
+		SMCINVOKE_DEINIT_CLK(g_clk.clks[i-1])
+
+	g_clk.clk_access_cnt = 0;
+}
+
+static struct clk *get_clk(const char *clk_name)
+{
+	int rc = 0;
+	struct clk *clk = clk_get(class_dev, clk_name);
+
+	if (!IS_ERR(clk)) {
+		if (!strcmp(clk_name, clk_names[CE_CORE_SRC_CLK])) {
+			rc = clk_set_rate(clk, ce_opp_freq_hz);
+			if (rc) {
+				SMCINVOKE_DEINIT_CLK(clk);
+				pr_err("Err %d setting clk %s to %uMhz\n",
+					rc, clk_name,
+					ce_opp_freq_hz/SMCINVOKE_CE_CLK_DIV);
+			}
+		}
+	} else {
+		pr_warn("Err %d getting clk %s\n", IS_ERR(clk), clk_name);
+		clk = NULL;
+	}
+	return clk;
+}
+
+static int init_clocks(void)
+{
+	int i = 0;
+	int rc = -1;
+
+	for (i = 0; i < CE_MAX_CLK; i++) {
+		g_clk.clks[i] = get_clk(clk_names[i]);
+		if (!g_clk.clks[i])
+			goto exit;
+	}
+	g_clk.clk_access_cnt = 0;
+	return 0;
+exit:
+	for ( ; i >= 0; i--)
+		SMCINVOKE_DEINIT_CLK(g_clk.clks[i]);
+	return rc;
+}
+
 /*
  * This function retrieves file pointer corresponding to FD provided. It stores
  * retrived file pointer until IOCTL call is concluded. Once call is completed,
