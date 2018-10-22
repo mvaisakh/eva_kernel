@@ -74,7 +74,7 @@
 #include "u_qc_ether.c"
 #include "f_gsi.c"
 #include "f_mass_storage.h"
-#include "f_usbnet.c"
+#include "f_ipc.h"
 
 USB_ETHERNET_MODULE_PARAMETERS();
 #ifdef CONFIG_MEDIA_SUPPORT
@@ -3311,87 +3311,34 @@ static struct android_usb_function dpl_gsi_function = {
 	.bind_config	= dpl_gsi_function_bind_config,
 };
 
-static int usbnet_function_init(struct android_usb_function *f,
-				struct usb_composite_dev *cdev)
+static int ipc_function_init(struct android_usb_function *f,
+				   struct usb_composite_dev *cdev)
 {
-	struct usbnet_device *dev;
-	struct usbnet_context *context;
-	struct net_device *net_dev;
-	int ret;
+	f->config = ipc_setup();
 
-	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
-	if (!dev)
-		return -ENOMEM;
-
-	net_dev = alloc_netdev(sizeof(struct usbnet_context),
-			   "usb%d", NET_NAME_UNKNOWN, usb_ether_setup);
-	if (!net_dev) {
-		pr_err("%s: alloc_netdev error\n", __func__);
-		return -EINVAL;
-	}
-
-	ret = register_netdev(net_dev);
-	if (ret) {
-		pr_err("%s: register_netdev error\n", __func__);
-		free_netdev(net_dev);
-		return -EINVAL;
-	}
-
-	ret = device_create_file(&net_dev->dev, &dev_attr_description);
-	if (ret < 0) {
-		pr_err("%s: sys file creation  error\n", __func__);
-		unregister_netdev(net_dev);
-		free_netdev(net_dev);
-		return -EINVAL;
-	}
-
-	context = netdev_priv(net_dev);
-	INIT_WORK(&context->usbnet_config_wq, usbnet_if_config);
-
-	context->config = 0;
-	dev->net_ctxt = context;
-
-	f->config = dev;
-
-#ifdef CONFIG_SWITCH
-	switch_dev_register(&usbnet_enable_device);
-#endif
-	return 0;
+	return IS_ERR(f->config);
 }
 
-static void usbnet_function_cleanup(struct android_usb_function *f)
+static void ipc_function_cleanup(struct android_usb_function *f)
 {
-	struct usbnet_device *dev = f->config;
-
-	usbnet_cleanup(dev);
-#ifdef CONFIG_SWITCH
-	switch_dev_unregister(&usbnet_enable_device);
-#endif
+	return ipc_cleanup(f->config);
 }
 
-static int usbnet_function_bind_config(struct android_usb_function *f,
-		struct usb_configuration *c)
+static int ipc_function_bind_config(struct android_usb_function *f,
+					    struct usb_configuration *c)
 {
-	struct usbnet_device *dev = f->config;
+	struct usb_function *ipc_f = NULL;
 
-	return usbnet_bind_config(dev, c);
+	ipc_f = ipc_bind_config((struct usb_function_instance *)f->config);
+
+	return usb_add_function(c, ipc_f);
 }
 
-static int usbnet_function_ctrlrequest(struct android_usb_function *f,
-					struct usb_composite_dev *cdev,
-					const struct usb_ctrlrequest *c)
-{
-	struct usbnet_device *dev = f->config;
-
-	return usbnet_ctrlrequest(dev, cdev, c);
-}
-
-static struct android_usb_function usbnet_function = {
-	.name		= "usbnet",
-	.init		= usbnet_function_init,
-	.cleanup	= usbnet_function_cleanup,
-	.bind_config	= usbnet_function_bind_config,
-	.ctrlrequest	= usbnet_function_ctrlrequest,
+static struct android_usb_function ipc_function = {
+	.name           = "ipc",
+	.init           = ipc_function_init,
+	.cleanup        = ipc_function_cleanup,
+	.bind_config    = ipc_function_bind_config,
 };
 
 static struct android_usb_function *supported_functions[] = {
@@ -3427,6 +3374,7 @@ static struct android_usb_function *supported_functions[] = {
 	[ANDROID_RMNET_GSI] = &rmnet_gsi_function,
 	[ANDROID_MBIM_GSI] = &mbim_gsi_function,
 	[ANDROID_DPL_GSI] = &dpl_gsi_function,
+	[ANDROID_IPC] = &ipc_function,
 	NULL
 };
 
@@ -3462,7 +3410,7 @@ static struct android_usb_function *default_functions[] = {
 #ifdef CONFIG_SND_RAWMIDI
 	&midi_function,
 #endif
-	&usbnet_function,
+	&ipc_function,
 	NULL
 };
 
