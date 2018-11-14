@@ -408,6 +408,7 @@ static void ipc_function_work(struct work_struct *w)
 			break;
 
 		ctxt->current_state = IPC_CONNECTED;
+		ctxt->online = 1;
 		ctxt->pdev = platform_device_alloc("ipc_bridge", -1);
 		if (!ctxt->pdev)
 			goto pdev_fail;
@@ -442,6 +443,7 @@ static void ipc_function_work(struct work_struct *w)
 	return;
 
 pdev_fail:
+	ctxt->online = 0;
 	ctxt->current_state = IPC_DISCONNECTED;
 	return;
 }
