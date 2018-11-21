@@ -432,6 +432,7 @@ static void ipc_function_work(struct work_struct *w)
 			break;
 
 		ctxt->current_state = IPC_DISCONNECTED;
+		ctxt->online = 0;
 		wake_up(&ctxt->state_wq);
 		platform_device_unregister(ctxt->pdev);
 		break;
