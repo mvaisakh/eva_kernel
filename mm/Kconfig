@@ -706,3 +706,9 @@ config VMAP_ZERO
 	help
 	   "vmap_zero()" will help kernel modules to zero big memory block.
 	   It will reserve a big vmalloc area dedicated to zero pages.
+
+config SWAPPINESS
+	int "default swappiness percentage"
+	default 60
+	help
+	  This sets the VM_SEAPPINESS value to be used for the swapfile.
