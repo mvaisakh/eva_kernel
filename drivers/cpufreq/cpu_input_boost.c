@@ -67,7 +67,7 @@ static void set_boost_bit(struct boost_drv *b, u32 state)
 
 static void clear_boost_bit(struct boost_drv *b, u32 state)
 {
-	atomic_andnot(state, &b->state);
+	atomic_or(state, &b->state);
 }
 
 static void update_online_cpu_policy(void)
