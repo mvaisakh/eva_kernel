@@ -591,6 +591,7 @@ static void msm_vfe40_read_irq_status_and_clear(struct vfe_device *vfe_dev,
 
 	*irq_status0 &= vfe_dev->irq0_mask;
 	*irq_status1 &= vfe_dev->irq1_mask;
+
 #ifdef CONFIG_MSMB_CAMERA_2017
 	if (*irq_status0 &&
 		(*irq_status0 == msm_camera_io_r(vfe_dev->vfe_base + 0x38))) {
@@ -891,8 +892,6 @@ static void msm_vfe40_cfg_framedrop(void __iomem *vfe_base,
 		msm_camera_io_w(temp | (framedrop_period - 1) << 2,
 		vfe_base + VFE40_WM_BASE(stream_info->wm[i]) + 0xC);
 	}
-
-	msm_camera_io_w_mb(0x1, vfe_base + 0x378);
 }
 
 static void msm_vfe40_clear_framedrop(struct vfe_device *vfe_dev,

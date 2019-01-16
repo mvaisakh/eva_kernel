@@ -37,13 +37,13 @@ static long msm_led_flash_subdev_ioctl(struct v4l2_subdev *sd,
 	}
 	switch (cmd) {
 	case VIDIOC_MSM_SENSOR_GET_SUBDEV_ID:
-                if (fctrl->func_tbl->flash_get_subdev_id)
+		if (fctrl->func_tbl->flash_get_subdev_id)
 			return fctrl->func_tbl->flash_get_subdev_id(fctrl, argp);
 		else
 			pr_err("NULL flash_get_subdev function\n");
 			return -EINVAL;
 	case VIDIOC_MSM_FLASH_LED_DATA_CFG:
-                if (fctrl->func_tbl->flash_led_config)
+		 if (fctrl->func_tbl->flash_led_config)
 			return fctrl->func_tbl->flash_led_config(fctrl, argp);
 		else
 			pr_err("NULL flash_led_config function\n");
@@ -51,7 +51,7 @@ static long msm_led_flash_subdev_ioctl(struct v4l2_subdev *sd,
 	case MSM_SD_NOTIFY_FREEZE:
 		return 0;
 	case MSM_SD_SHUTDOWN:
-                if (fctrl->func_tbl->flash_led_release)
+		 if (fctrl->func_tbl->flash_led_release)
 			return fctrl->func_tbl->flash_led_release(fctrl);
 		else
 			pr_err("NULL flash_led_release function\n");
