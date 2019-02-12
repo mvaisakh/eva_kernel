@@ -385,7 +385,11 @@ static int32_t afe_callback(struct apr_client_data *data, void *priv)
 #if defined(CONFIG_SND_SOC_OPALUM) || defined(CONFIG_SND_SOC_TAS2560)
 		}
 #endif
-		wake_up(&this_afe.wait[data->token]);
+
+		if (afe_token_is_valid(data->token))
+			wake_up(&this_afe.wait[data->token]);
+		else
+			return -EINVAL;
 	} else if (data->payload_size) {
 		uint32_t *payload;
 		uint16_t port_id = 0;
