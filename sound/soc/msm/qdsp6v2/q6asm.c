@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2012-2019, The Linux Foundation. All rights reserved.
  * Author: Brian Swetland <swetland@google.com>
  *
  * This software is licensed under the terms of the GNU General Public
@@ -3242,7 +3242,7 @@ int q6asm_open_shared_io(struct audio_client *ac,
 
 	if (config->channels > PCM_FORMAT_MAX_NUM_CHANNEL) {
 		pr_err("%s: Invalid channel count %d\n", __func__,
-			config->channels);
+		       config->channels);
 		return -EINVAL;
 	}
 
@@ -3717,6 +3717,13 @@ int q6asm_set_encdec_chan_map(struct audio_client *ac,
 
 	pr_debug("%s: Session %d, num_channels = %d\n",
 			 __func__, ac->session, num_channels);
+
+	if (num_channels > MAX_CHAN_MAP_CHANNELS) {
+		pr_err("%s: Invalid channel count %d\n", __func__,
+			num_channels);
+		return -EINVAL;
+	}
+
 	q6asm_add_hdr(ac, &chan_map.hdr, sizeof(chan_map), TRUE);
 	atomic_set(&ac->cmd_state, -1);
 	chan_map.hdr.opcode = ASM_STREAM_CMD_SET_ENCDEC_PARAM;
@@ -4862,7 +4869,6 @@ static int __q6asm_media_format_block_multi_ch_pcm_v3(struct audio_client *ac,
 fail_cmd:
 	return rc;
 }
-
 
 int q6asm_media_format_block_multi_ch_pcm(struct audio_client *ac,
 		uint32_t rate, uint32_t channels,
