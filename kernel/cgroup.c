@@ -59,6 +59,8 @@
 #include <linux/delay.h>
 
 #include <linux/atomic.h>
+#include <linux/binfmts.h>
+#include <linux/cpu_boost.h>
 
 /*
  * pidlists linger the following amount before being destroyed.  The goal
@@ -2426,7 +2428,10 @@ retry_find_task:
 	}
 
 	ret = cgroup_attach_task(cgrp, tsk, threadgroup);
-
+	if (!ret && !threadgroup &&
+	    !strcmp(of->kn->parent->name, "top-app") &&
+	    is_zygote_pid(tsk->parent->pid))
+		do_input_boost_max();
 	threadgroup_unlock(tsk);
 
 	put_task_struct(tsk);
