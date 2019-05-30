@@ -16,6 +16,7 @@
 #include "msm_sd.h"
 #include "msm_actuator.h"
 #include "msm_cci.h"
+#include <linux/cpu_boost.h>
 
 DEFINE_MSM_MUTEX(msm_actuator_mutex);
 
@@ -601,6 +602,7 @@ static int32_t msm_actuator_move_focus(
 	struct msm_camera_i2c_reg_setting reg_setting;
 
 	CDBG("called, dir %d, num_steps %d\n", dir, num_steps);
+	do_input_boost_max();
 
 	if (dest_step_pos == a_ctrl->curr_step_pos)
 		return rc;

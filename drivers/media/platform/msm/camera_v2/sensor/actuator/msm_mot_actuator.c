@@ -11,6 +11,7 @@
  */
 
 #include "msm_actuator.h"
+#include <linux/cpu_boost.h>
 
 static int32_t msm_mot_actuator_init_step_table(
 	struct msm_actuator_ctrl_t *a_ctrl,
@@ -79,6 +80,7 @@ static int32_t msm_mot_actuator_move_focus(
 	}
 
 	CDBG("called, dir %d, num_steps %d\n", dir, num_steps);
+	do_input_boost_max();
 
 	if (dest_step_pos == a_ctrl->curr_step_pos)
 		return rc;
