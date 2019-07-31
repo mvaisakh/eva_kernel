@@ -162,5 +162,14 @@ config SMB1390_CHARGE_PUMP
 	  Say Y to include support for SMB1390 Charge Pump.
 	  SMB1390 is a div2 charge pump capable of delivering 6A charge current
 	  with very high efficiency.
+	  
+config QPNP_SMBCHARGER_MMI_LITE
+	tristate "QPNP SMB Charger driver for MMI LITE"
+	depends on MFD_SPMI_PMIC
+	help
+	  Say Y here to enable the dual path switch mode battery charger which
+	  supports USB detection and battery charging up to 3A.
+	  The driver also offers relevant information to userspace via the
+	  power supply framework.
 
 endmenu
