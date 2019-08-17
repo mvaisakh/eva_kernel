@@ -2322,7 +2322,7 @@ static void smbchg_parallel_usb_check_ok(struct smbchg_chip *chip)
 	mutex_lock(&chip->parallel.lock);
 	if ((parallel_psy) && (smbchg_is_parallel_usb_ok(chip))) {
 		smbchg_stay_awake(chip, PM_PARALLEL_CHECK);
-		schedule_delayed_work(
+		queue_delayed_work(system_power_efficient_wq,
 			&chip->parallel_en_work,
 			msecs_to_jiffies(PARALLEL_CHARGER_EN_DELAY_MS));
 	} else {
@@ -2695,8 +2695,8 @@ static int smbchg_chg_system_temp_level_set(struct smbchg_chip *chip,
 
 	smbchg_stay_awake(chip, PM_HEARTBEAT);
 	cancel_delayed_work(&chip->heartbeat_work);
-	schedule_delayed_work(&chip->heartbeat_work,
-			      msecs_to_jiffies(0));
+	queue_delayed_work(system_power_efficient_wq,
+		&chip->heartbeat_work, msecs_to_jiffies(0));
 	mutex_unlock(&chip->current_change_lock);
 	return rc;
 }
@@ -3136,15 +3136,15 @@ static int smbchg_battery_set_property(struct power_supply *psy,
 		chip->hotspot_temp = val->intval;
 		smbchg_stay_awake(chip, PM_HEARTBEAT);
 		cancel_delayed_work(&chip->heartbeat_work);
-		schedule_delayed_work(&chip->heartbeat_work,
-				      msecs_to_jiffies(0));
+		queue_delayed_work(system_power_efficient_wq,
+			&chip->heartbeat_work, msecs_to_jiffies(0));
 		break;
 	case POWER_SUPPLY_PROP_TEMP:
 		if (chip->test_mode)
 			chip->test_mode_temp = val->intval;
 		cancel_delayed_work(&chip->heartbeat_work);
-		schedule_delayed_work(&chip->heartbeat_work,
-					msecs_to_jiffies(0));
+		queue_delayed_work(system_power_efficient_wq,
+			&chip->heartbeat_work, msecs_to_jiffies(0));
 		break;
 	case POWER_SUPPLY_PROP_FLASH_ACTIVE:
 		rc = smbchg_otg_pulse_skip_disable(chip,
@@ -3468,7 +3468,8 @@ static void smbchg_vfloat_adjust_check(struct smbchg_chip *chip)
 
 	smbchg_stay_awake(chip, PM_REASON_VFLOAT_ADJUST);
 	pr_smb(PR_STATUS, "Starting vfloat adjustments\n");
-	schedule_delayed_work(&chip->vfloat_adjust_work, 0);
+	queue_delayed_work(system_power_efficient_wq,
+			&chip->vfloat_adjust_work, 0);
 }
 
 #define FV_STS_REG			0xC
@@ -4623,7 +4624,8 @@ static void smbchg_hvdcp_det_work(struct work_struct *work)
 	chip->apsd_rerun_at_boot = false;
 	smbchg_stay_awake(chip, PM_HEARTBEAT);
 	cancel_delayed_work(&chip->heartbeat_work);
-	schedule_delayed_work(&chip->heartbeat_work, msecs_to_jiffies(0));
+	queue_delayed_work(system_power_efficient_wq,
+		&chip->heartbeat_work, msecs_to_jiffies(0));
 }
 
 static irqreturn_t chg_term_handler(int irq, void *_chip)
@@ -4893,7 +4895,8 @@ static void handle_usb_removal(struct smbchg_chip *chip)
 	smbchg_stay_awake(chip, PM_HEARTBEAT);
 	smbchg_relax(chip, PM_CHARGER);
 	cancel_delayed_work(&chip->heartbeat_work);
-	schedule_delayed_work(&chip->heartbeat_work, msecs_to_jiffies(0));
+	queue_delayed_work(system_power_efficient_wq,
+		&chip->heartbeat_work, msecs_to_jiffies(0));
 }
 
 #define HVDCP_NOTIFY_MS		2500
@@ -4920,8 +4923,8 @@ static void handle_usb_insertion(struct smbchg_chip *chip)
 	    !chip->apsd_rerun_cnt && !chip->factory_mode) {
 		dev_info(chip->dev, "HW Detected SDP!\n");
 		chip->apsd_rerun_cnt++;
-		schedule_delayed_work(&chip->usb_insertion_work,
-				      msecs_to_jiffies(5000));
+		queue_delayed_work(system_power_efficient_wq,
+			&chip->usb_insertion_work, msecs_to_jiffies(5000));
 	} else
 		chip->apsd_rerun_cnt = 0;
 
@@ -4965,7 +4968,8 @@ static void handle_usb_insertion(struct smbchg_chip *chip)
 		}
 		schedule_work(&chip->usb_set_online_work);
 		chip->hvdcp_det_done = false;
-		schedule_delayed_work(&chip->hvdcp_det_work,
+		queue_delayed_work(system_power_efficient_wq,
+					&chip->hvdcp_det_work,
 					msecs_to_jiffies(HVDCP_NOTIFY_MS));
 	}
 
@@ -4978,7 +4982,8 @@ static void handle_usb_insertion(struct smbchg_chip *chip)
 	}
 	smbchg_stay_awake(chip, PM_HEARTBEAT);
 	cancel_delayed_work(&chip->heartbeat_work);
-	schedule_delayed_work(&chip->heartbeat_work, msecs_to_jiffies(0));
+	queue_delayed_work(system_power_efficient_wq,
+		&chip->heartbeat_work, msecs_to_jiffies(0));
 }
 
 /**
@@ -8358,11 +8363,11 @@ end_hb:
 	power_supply_changed(&chip->batt_psy);
 
 	if (!chip->stepchg_state_holdoff && !chip->aicl_wait_retries)
-		schedule_delayed_work(&chip->heartbeat_work,
-				      msecs_to_jiffies(HEARTBEAT_DELAY_MS));
+		queue_delayed_work(system_power_efficient_wq,
+			&chip->heartbeat_work, msecs_to_jiffies(HEARTBEAT_DELAY_MS));
 	else
-		schedule_delayed_work(&chip->heartbeat_work,
-				      msecs_to_jiffies(HEARTBEAT_HOLDOFF_MS));
+		queue_delayed_work(system_power_efficient_wq,
+			&chip->heartbeat_work, msecs_to_jiffies(HEARTBEAT_HOLDOFF_MS));
 
 	smbchg_relax(chip, PM_HEARTBEAT);
 }
@@ -8699,8 +8704,8 @@ static int smbchg_probe(struct spmi_device *spmi)
 
 	}
 	smbchg_stay_awake(chip, PM_HEARTBEAT);
-	schedule_delayed_work(&chip->heartbeat_work,
-			      msecs_to_jiffies(0));
+	queue_delayed_work(system_power_efficient_wq,
+		&chip->heartbeat_work, msecs_to_jiffies(0));
 
 	dev_info(chip->dev,
 		"SMBCHG successfully probe Charger version=%s Revision DIG:%d.%d ANA:%d.%d batt=%d dc=%d usb=%d\n",
