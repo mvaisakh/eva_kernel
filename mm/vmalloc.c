@@ -430,7 +430,6 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
 	unsigned long addr;
 	int purged = 0;
 	struct vmap_area *first;
-	static struct vmalloc_info vmi;
 	int ratelimit;
 
 	BUG_ON(!size);
@@ -550,15 +549,6 @@ overflow:
 
 	count_vm_event(VMAP_ALLOC_FAIL);
 	ratelimit = vmap_alloc_fail_ratelimit();
-	if (ratelimit) {
-		get_vmalloc_info(&vmi);
-		printk(KERN_WARNING
-			"vmap allocation for size %lu failed (0x%lx, 0x%lx): "
-			"use vmalloc=<size> to increase size.\n"
-			"current VmallocUsed: %8lu kB, VmallocChunk:   %8lu kB\n",
-			 size, vstart, vend, vmi.used >> 10,
-			 vmi.largest_chunk >> 10);
-	}
 #ifdef CONFIG_DEBUG_VMAP_ALLOC_FAIL
 	if (!ratelimit)
 		BUG();
