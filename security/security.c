@@ -1490,7 +1490,7 @@ int security_key_getsecurity(struct key *key, char **_buffer)
 
 #endif	/* CONFIG_KEYS */
 
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 
 int security_audit_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule)
 {
@@ -1513,4 +1513,4 @@ int security_audit_rule_match(u32 secid, u32 field, u32 op, void *lsmrule,
 	return security_ops->audit_rule_match(secid, field, op, lsmrule, actx);
 }
 
-#endif /* CONFIG_AUDIT */
+#endif /* CONFIG_AUDIT_DEPRECATED */

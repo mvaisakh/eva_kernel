@@ -193,7 +193,7 @@ int smk_access(struct smack_known *subject, struct smack_known *object,
 #endif
 
 out_audit:
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 	if (a)
 		smack_log(subject->smk_known, object->smk_known,
 			  request, rc, a);
@@ -247,7 +247,7 @@ int smk_tskacc(struct task_smack *tsp, struct smack_known *obj_known,
 		rc = 0;
 
 out_audit:
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 	if (a)
 		smack_log(sbj_known->smk_known, obj_known->smk_known,
 			  mode, rc, a);
@@ -274,7 +274,7 @@ int smk_curacc(struct smack_known *obj_known,
 	return smk_tskacc(tsp, obj_known, mode, a);
 }
 
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 /**
  * smack_str_from_perm : helper to transalate an int to a
  * readable string
@@ -369,7 +369,7 @@ void smack_log(char *subject_label, char *object_label, int request,
 
 	common_lsm_audit(a, smack_log_callback, NULL);
 }
-#else /* #ifdef CONFIG_AUDIT */
+#else /* #ifdef CONFIG_AUDIT_DEPRECATED */
 void smack_log(char *subject_label, char *object_label, int request,
                int result, struct smk_audit_info *ad)
 {

@@ -109,8 +109,8 @@ obj-$(CONFIG_US3_MC)    += chmc.o
 obj-$(CONFIG_KPROBES)   += kprobes.o
 obj-$(CONFIG_SUN_LDOMS) += ldc.o vio.o viohs.o ds.o
 
-obj-$(CONFIG_AUDIT)     += audit.o
-audit--$(CONFIG_AUDIT)  := compat_audit.o
+obj-$(CONFIG_AUDIT_DEPRECATED)     += audit.o
+audit--$(CONFIG_AUDIT_DEPRECATED)  := compat_audit.o
 obj-$(CONFIG_COMPAT)    += $(audit--y)
 
 pc--$(CONFIG_PERF_EVENTS) := perf_event.o

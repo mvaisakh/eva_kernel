@@ -1,7 +1,7 @@
 config SECURITY_APPARMOR
 	bool "AppArmor support"
 	depends on SECURITY && NET
-	select AUDIT
+	select AUDIT_DEPRECATED
 	select SECURITY_PATH
 	select SECURITYFS
 	select SECURITY_NETWORK

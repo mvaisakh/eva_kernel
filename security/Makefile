@@ -19,7 +19,7 @@ obj-$(CONFIG_SECURITY)			+= security.o capability.o
 obj-$(CONFIG_SECURITYFS)		+= inode.o
 obj-$(CONFIG_SECURITY_SELINUX)		+= selinux/
 obj-$(CONFIG_SECURITY_SMACK)		+= smack/
-obj-$(CONFIG_AUDIT)			+= lsm_audit.o
+obj-$(CONFIG_AUDIT_DEPRECATED)			+= lsm_audit.o
 
 obj-$(CONFIG_SECURITY_TOMOYO)		+= tomoyo/
 obj-$(CONFIG_SECURITY_APPARMOR)		+= apparmor/

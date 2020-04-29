@@ -457,7 +457,7 @@ static inline bool audit_loginuid_set(struct task_struct *tsk)
 	return uid_valid(audit_get_loginuid(tsk));
 }
 
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 /* These are defined in audit.c */
 				/* Public API */
 extern __printf(4, 5)
@@ -510,7 +510,7 @@ extern int audit_rule_change(int type, __u32 portid, int seq,
 extern int audit_list_rules_send(struct sk_buff *request_skb, int seq);
 
 extern u32 audit_enabled;
-#else /* CONFIG_AUDIT */
+#else /* CONFIG_AUDIT_DEPRECATED */
 static inline __printf(4, 5)
 void audit_log(struct audit_context *ctx, gfp_t gfp_mask, int type,
 	       const char *fmt, ...)
@@ -556,7 +556,7 @@ static inline void audit_log_task_info(struct audit_buffer *ab,
 				       struct task_struct *tsk)
 { }
 #define audit_enabled 0
-#endif /* CONFIG_AUDIT */
+#endif /* CONFIG_AUDIT_DEPRECATED */
 static inline void audit_log_string(struct audit_buffer *ab, const char *buf)
 {
 	audit_log_n_string(ab, buf, strlen(buf));

@@ -45,8 +45,8 @@ obj-$(CONFIG_MODULES)		+= s390_ksyms.o module.o
 obj-$(CONFIG_SMP)		+= smp.o
 obj-$(CONFIG_SCHED_BOOK)	+= topology.o
 obj-$(CONFIG_HIBERNATION)	+= suspend.o swsusp_asm64.o
-obj-$(CONFIG_AUDIT)		+= audit.o
-compat-obj-$(CONFIG_AUDIT)	+= compat_audit.o
+obj-$(CONFIG_AUDIT_DEPRECATED)		+= audit.o
+compat-obj-$(CONFIG_AUDIT_DEPRECATED)	+= compat_audit.o
 obj-$(CONFIG_COMPAT)		+= compat_linux.o compat_signal.o
 obj-$(CONFIG_COMPAT)		+= compat_wrapper.o $(compat-obj-y)
 

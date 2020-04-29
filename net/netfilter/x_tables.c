@@ -1159,7 +1159,7 @@ xt_replace_table(struct xt_table *table,
 	 */
 	local_bh_enable();
 
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 	if (audit_enabled) {
 		struct audit_buffer *ab;
 

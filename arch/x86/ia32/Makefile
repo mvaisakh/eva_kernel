@@ -7,5 +7,5 @@ obj-$(CONFIG_IA32_EMULATION) += nosyscall.o syscall_ia32.o
 
 obj-$(CONFIG_IA32_AOUT) += ia32_aout.o
 
-audit-class-$(CONFIG_AUDIT) := audit.o
+audit-class-$(CONFIG_AUDIT_DEPRECATED) := audit.o
 obj-$(CONFIG_IA32_EMULATION) += $(audit-class-y)
