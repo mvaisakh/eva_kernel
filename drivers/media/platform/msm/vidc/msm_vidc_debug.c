@@ -317,9 +317,9 @@ static int vidc_debug_inst_show(struct seq_file *s, void *unused)
 	for (i = 0; i < MAX_PORT_NUM; i++) {
 		seq_printf(s, "capability: %s\n",
 			i == OUTPUT_PORT ? "Output" : "Capture");
-		seq_printf(s, "name : %s\n", inst->fmts[i]->name);
-		seq_printf(s, "planes : %d\n", inst->fmts[i]->num_planes);
-		seq_printf(s, "type: %s\n", inst->fmts[i]->type == OUTPUT_PORT ?
+		seq_printf(s, "name : %s\n", inst->fmts[i].name);
+		seq_printf(s, "planes : %d\n", inst->fmts[i].num_planes);
+		seq_printf(s, "type: %s\n", inst->fmts[i].type == OUTPUT_PORT ?
 			"Output" : "Capture");
 		switch (inst->buffer_mode_set[i]) {
 		case HAL_BUFFER_MODE_STATIC:
@@ -338,7 +338,7 @@ static int vidc_debug_inst_show(struct seq_file *s, void *unused)
 		seq_printf(s, "count: %u\n",
 				inst->bufq[i].vb2_bufq.num_buffers);
 
-		for (j = 0; j < inst->fmts[i]->num_planes; j++)
+		for (j = 0; j < inst->fmts[i].num_planes; j++)
 			seq_printf(s,
 			"size for plane %d: %u\n", j,
 			inst->bufq[i].vb2_bufq.plane_sizes[j]);
