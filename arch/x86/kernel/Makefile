@@ -120,7 +120,7 @@ obj-$(CONFIG_PMC_ATOM)			+= pmc_atom.o
 ###
 # 64 bit specific files
 ifeq ($(CONFIG_X86_64),y)
-	obj-$(CONFIG_AUDIT)		+= audit_64.o
+	obj-$(CONFIG_AUDIT_DEPRECATED)		+= audit_64.o
 
 	obj-$(CONFIG_GART_IOMMU)	+= amd_gart_64.o aperture_64.o
 	obj-$(CONFIG_CALGARY_IOMMU)	+= pci-calgary_64.o tce_64.o

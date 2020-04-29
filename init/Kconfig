@@ -302,12 +302,21 @@ config AUDIT
 	  logging of avc messages output).  Does not do system-call
 	  auditing without CONFIG_AUDITSYSCALL.
 
+config AUDIT_DEPRECATED
+	bool "Auditing support"
+	depends on NET
+	help
+	  Enable auditing infrastructure that can be used with another
+	  kernel subsystem, such as SELinux (which requires this for
+	  logging of avc messages output).  Does not do system-call
+	  auditing without CONFIG_AUDITSYSCALL.
+
 config HAVE_ARCH_AUDITSYSCALL
 	bool
 
 config AUDITSYSCALL
 	bool "Enable system-call auditing support"
-	depends on AUDIT && HAVE_ARCH_AUDITSYSCALL
+	depends on AUDIT_DEPRECATED && HAVE_ARCH_AUDITSYSCALL
 	default y if SECURITY_SELINUX
 	help
 	  Enable low-overhead system-call auditing infrastructure that

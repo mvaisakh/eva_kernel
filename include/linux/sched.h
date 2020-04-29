@@ -720,7 +720,7 @@ struct signal_struct {
 #ifdef CONFIG_TASKSTATS
 	struct taskstats *stats;
 #endif
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 	unsigned audit_tty;
 	unsigned audit_tty_log_passwd;
 	struct tty_audit_buf *tty_audit_buf;

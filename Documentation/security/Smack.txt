@@ -673,7 +673,7 @@ These mount options apply to all file system types.
 
 Smack auditing
 
-If you want Smack auditing of security events, you need to set CONFIG_AUDIT
+If you want Smack auditing of security events, you need to set CONFIG_AUDIT_DEPRECATED
 in your kernel configuration.
 By default, all denied events will be audited. You can change this behavior by
 writing a single character to the /smack/logging file :

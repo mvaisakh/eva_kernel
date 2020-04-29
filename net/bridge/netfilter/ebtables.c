@@ -1075,7 +1075,7 @@ static int do_replace_finish(struct net *net, struct ebt_replace *repl,
 
 	vfree(counterstmp);
 
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 	if (audit_enabled) {
 		struct audit_buffer *ab;
 

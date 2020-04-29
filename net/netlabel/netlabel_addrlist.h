@@ -120,7 +120,7 @@ struct netlbl_af4list *netlbl_af4list_search_exact(__be32 addr,
 						   __be32 mask,
 						   struct list_head *head);
 
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 void netlbl_af4list_audit_addr(struct audit_buffer *audit_buf,
 			       int src, const char *dev,
 			       __be32 addr, __be32 mask);
@@ -188,7 +188,7 @@ struct netlbl_af6list *netlbl_af6list_search_exact(const struct in6_addr *addr,
 						   const struct in6_addr *mask,
 						   struct list_head *head);
 
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 void netlbl_af6list_audit_addr(struct audit_buffer *audit_buf,
 			       int src,
 			       const char *dev,
