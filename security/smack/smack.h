@@ -215,11 +215,11 @@ struct smack_audit_data {
 };
 
 /*
- * Smack audit data; is empty if CONFIG_AUDIT not set
+ * Smack audit data; is empty if CONFIG_AUDIT_DEPRECATED not set
  * to save some stack
  */
 struct smk_audit_info {
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 	struct common_audit_data a;
 	struct smack_audit_data sad;
 #endif
@@ -350,11 +350,11 @@ void smack_log(char *subject_label, char *object_label,
 		int request,
 		int result, struct smk_audit_info *auditdata);
 
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 
 /*
  * some inline functions to set up audit data
- * they do nothing if CONFIG_AUDIT is not set
+ * they do nothing if CONFIG_AUDIT_DEPRECATED is not set
  *
  */
 static inline void smk_ad_init(struct smk_audit_info *a, const char *func,

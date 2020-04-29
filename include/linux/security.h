@@ -1731,13 +1731,13 @@ struct security_operations {
 	int (*key_getsecurity)(struct key *key, char **_buffer);
 #endif	/* CONFIG_KEYS */
 
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 	int (*audit_rule_init) (u32 field, u32 op, char *rulestr, void **lsmrule);
 	int (*audit_rule_known) (struct audit_krule *krule);
 	int (*audit_rule_match) (u32 secid, u32 field, u32 op, void *lsmrule,
 				 struct audit_context *actx);
 	void (*audit_rule_free) (void *lsmrule);
-#endif /* CONFIG_AUDIT */
+#endif /* CONFIG_AUDIT_DEPRECATED */
 };
 
 /* prototypes */
@@ -3132,7 +3132,7 @@ static inline int security_key_getsecurity(struct key *key, char **_buffer)
 #endif
 #endif /* CONFIG_KEYS */
 
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 #ifdef CONFIG_SECURITY
 int security_audit_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule);
 int security_audit_rule_known(struct audit_krule *krule);
@@ -3163,7 +3163,7 @@ static inline void security_audit_rule_free(void *lsmrule)
 { }
 
 #endif /* CONFIG_SECURITY */
-#endif /* CONFIG_AUDIT */
+#endif /* CONFIG_AUDIT_DEPRECATED */
 
 #ifdef CONFIG_SECURITYFS
 

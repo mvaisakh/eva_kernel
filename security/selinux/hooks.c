@@ -2886,7 +2886,7 @@ static noinline int audit_inode_permission(struct inode *inode,
 					   int result,
 					   unsigned flags)
 {
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 	struct common_audit_data ad;
 	struct inode_security_struct *isec = inode->i_security;
 	int rc;
@@ -6162,7 +6162,7 @@ static struct security_operations selinux_ops = {
 	.key_getsecurity =		selinux_key_getsecurity,
 #endif
 
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 	.audit_rule_init =		selinux_audit_rule_init,
 	.audit_rule_known =		selinux_audit_rule_known,
 	.audit_rule_match =		selinux_audit_rule_match,

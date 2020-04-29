@@ -917,7 +917,7 @@ static int cap_key_getsecurity(struct key *key, char **_buffer)
 
 #endif /* CONFIG_KEYS */
 
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 static int cap_audit_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule)
 {
 	return 0;
@@ -937,7 +937,7 @@ static int cap_audit_rule_match(u32 secid, u32 field, u32 op, void *lsmrule,
 static void cap_audit_rule_free(void *lsmrule)
 {
 }
-#endif /* CONFIG_AUDIT */
+#endif /* CONFIG_AUDIT_DEPRECATED */
 
 #define set_to_cap_if_null(ops, function)				\
 	do {								\
@@ -1152,7 +1152,7 @@ void __init security_fixup_ops(struct security_operations *ops)
 	set_to_cap_if_null(ops, key_permission);
 	set_to_cap_if_null(ops, key_getsecurity);
 #endif	/* CONFIG_KEYS */
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 	set_to_cap_if_null(ops, audit_rule_init);
 	set_to_cap_if_null(ops, audit_rule_known);
 	set_to_cap_if_null(ops, audit_rule_match);

@@ -43,7 +43,7 @@ config INTEGRITY_ASYMMETRIC_KEYS
 
 config INTEGRITY_AUDIT
 	bool "Enables integrity auditing support "
-	depends on AUDIT
+	depends on AUDIT_DEPRECATED
 	default y
 	help
 	  In addition to enabling integrity auditing support, this

@@ -182,7 +182,7 @@ config CRC8
 
 config AUDIT_GENERIC
 	bool
-	depends on AUDIT && !AUDIT_ARCH
+	depends on AUDIT_DEPRECATED && !AUDIT_ARCH
 	default y
 
 config AUDIT_ARCH_COMPAT_GENERIC

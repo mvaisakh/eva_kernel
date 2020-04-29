@@ -2184,7 +2184,7 @@ static int smack_netlabel_send(struct sock *sk, struct sockaddr_in *sap)
 	rcu_read_lock();
 	hkp = smack_host_label(sap);
 	if (hkp != NULL) {
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 		struct lsm_network_audit net;
 
 		smk_ad_init_net(&ad, __func__, LSM_AUDIT_DATA_NET, &net);
@@ -2299,7 +2299,7 @@ static int smk_ipv6_port_check(struct sock *sk, struct sockaddr_in6 *address,
 	struct smack_known *object;
 	struct smk_audit_info ad;
 	int rc;
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 	struct lsm_network_audit net;
 #endif
 
@@ -2343,7 +2343,7 @@ static int smk_ipv6_port_check(struct sock *sk, struct sockaddr_in6 *address,
 
 auditout:
 
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 	smk_ad_init_net(&ad, __func__, LSM_AUDIT_DATA_NET, &net);
 	ad.a.u.net->family = sk->sk_family;
 	ad.a.u.net->dport = port;
@@ -2595,7 +2595,7 @@ static int smk_curacc_shm(struct shmid_kernel *shp, int access)
 	struct smk_audit_info ad;
 	int rc;
 
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_IPC);
 	ad.a.u.ipc_id = shp->shm_perm.id;
 #endif
@@ -2722,7 +2722,7 @@ static int smk_curacc_sem(struct sem_array *sma, int access)
 	struct smk_audit_info ad;
 	int rc;
 
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_IPC);
 	ad.a.u.ipc_id = sma->sem_perm.id;
 #endif
@@ -2855,7 +2855,7 @@ static int smk_curacc_msq(struct msg_queue *msq, int access)
 	struct smk_audit_info ad;
 	int rc;
 
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_IPC);
 	ad.a.u.ipc_id = msq->q_perm.id;
 #endif
@@ -2959,7 +2959,7 @@ static int smack_ipc_permission(struct kern_ipc_perm *ipp, short flag)
 	struct smk_audit_info ad;
 	int rc;
 
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_IPC);
 	ad.a.u.ipc_id = ipp->id;
 #endif
@@ -3286,14 +3286,14 @@ static int smack_unix_stream_connect(struct sock *sock,
 	struct socket_smack *nsp = newsk->sk_security;
 	struct smk_audit_info ad;
 	int rc = 0;
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 	struct lsm_network_audit net;
 #endif
 
 	if (!smack_privileged(CAP_MAC_OVERRIDE)) {
 		skp = ssp->smk_out;
 		okp = osp->smk_out;
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 		smk_ad_init_net(&ad, __func__, LSM_AUDIT_DATA_NET, &net);
 		smk_ad_setfield_u_net_sk(&ad, other);
 #endif
@@ -3332,7 +3332,7 @@ static int smack_unix_may_send(struct socket *sock, struct socket *other)
 	struct smk_audit_info ad;
 	int rc;
 
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 	struct lsm_network_audit net;
 
 	smk_ad_init_net(&ad, __func__, LSM_AUDIT_DATA_NET, &net);
@@ -3528,7 +3528,7 @@ static int smack_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
 	struct sockaddr_in6 sadd;
 	int rc = 0;
 	struct smk_audit_info ad;
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 	struct lsm_network_audit net;
 #endif
 	switch (sk->sk_family) {
@@ -3546,7 +3546,7 @@ static int smack_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
 
 		netlbl_secattr_destroy(&secattr);
 
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 		smk_ad_init_net(&ad, __func__, LSM_AUDIT_DATA_NET, &net);
 		ad.a.u.net->family = sk->sk_family;
 		ad.a.u.net->netif = skb->skb_iif;
@@ -3706,7 +3706,7 @@ static int smack_inet_conn_request(struct sock *sk, struct sk_buff *skb,
 	struct smack_known *hskp;
 	int rc;
 	struct smk_audit_info ad;
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 	struct lsm_network_audit net;
 #endif
 
@@ -3730,7 +3730,7 @@ static int smack_inet_conn_request(struct sock *sk, struct sk_buff *skb,
 		skp = &smack_known_huh;
 	netlbl_secattr_destroy(&secattr);
 
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 	smk_ad_init_net(&ad, __func__, LSM_AUDIT_DATA_NET, &net);
 	ad.a.u.net->family = family;
 	ad.a.u.net->netif = skb->skb_iif;
@@ -3867,7 +3867,7 @@ static int smack_key_permission(key_ref_t key_ref,
 	 */
 	if (tkp == NULL)
 		return -EACCES;
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_KEY);
 	ad.a.u.key_struct.key = keyp->serial;
 	ad.a.u.key_struct.key_desc = keyp->description;
@@ -3895,7 +3895,7 @@ static int smack_key_permission(key_ref_t key_ref,
  * the needed unique representation. This also better fits the smack
  * model where nearly everything is a label.
  */
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 
 /**
  * smack_audit_rule_init - Initialize a smack audit rule
@@ -4000,7 +4000,7 @@ static void smack_audit_rule_free(void *vrule)
 	/* No-op */
 }
 
-#endif /* CONFIG_AUDIT */
+#endif /* CONFIG_AUDIT_DEPRECATED */
 
 /**
  * smack_ismaclabel - check if xattr @name references a smack MAC label
@@ -4205,12 +4205,12 @@ struct security_operations smack_ops = {
 #endif /* CONFIG_KEYS */
 
  /* Audit hooks */
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 	.audit_rule_init =		smack_audit_rule_init,
 	.audit_rule_known =		smack_audit_rule_known,
 	.audit_rule_match =		smack_audit_rule_match,
 	.audit_rule_free =		smack_audit_rule_free,
-#endif /* CONFIG_AUDIT */
+#endif /* CONFIG_AUDIT_DEPRECATED */
 
 	.ismaclabel =			smack_ismaclabel,
 	.secid_to_secctx = 		smack_secid_to_secctx,

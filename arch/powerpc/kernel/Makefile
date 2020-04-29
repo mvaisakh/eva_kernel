@@ -110,8 +110,8 @@ obj-$(CONFIG_PCI)		+= pci_$(CONFIG_WORD_SIZE).o $(pci64-y) \
 obj-$(CONFIG_PCI_MSI)		+= msi.o
 obj-$(CONFIG_KEXEC)		+= machine_kexec.o crash.o \
 				   machine_kexec_$(CONFIG_WORD_SIZE).o
-obj-$(CONFIG_AUDIT)		+= audit.o
-obj64-$(CONFIG_AUDIT)		+= compat_audit.o
+obj-$(CONFIG_AUDIT_DEPRECATED)		+= audit.o
+obj64-$(CONFIG_AUDIT_DEPRECATED)		+= compat_audit.o
 
 obj-$(CONFIG_PPC_IO_WORKAROUNDS)	+= io-workarounds.o
 

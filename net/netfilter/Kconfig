@@ -602,10 +602,10 @@ comment "Xtables targets"
 
 config NETFILTER_XT_TARGET_AUDIT
 	tristate "AUDIT target support"
-	depends on AUDIT
+	depends on AUDIT_DEPRECATED
 	depends on NETFILTER_ADVANCED
 	---help---
-	  This option adds a 'AUDIT' target, which can be used to create
+	  This option adds a 'AUDIT_DEPRECATED' target, which can be used to create
 	  audit records for packets dropped/accepted.
 
 	  To compileit as a module, choose M here. If unsure, say N.

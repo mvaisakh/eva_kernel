@@ -308,7 +308,7 @@ struct netlbl_af6list *netlbl_af6list_remove(const struct in6_addr *addr,
  * Audit Helper Functions
  */
 
-#ifdef CONFIG_AUDIT
+#ifdef CONFIG_AUDIT_DEPRECATED
 /**
  * netlbl_af4list_audit_addr - Audit an IPv4 address
  * @audit_buf: audit buffer
@@ -380,4 +380,4 @@ void netlbl_af6list_audit_addr(struct audit_buffer *audit_buf,
 	}
 }
 #endif /* IPv6 */
-#endif /* CONFIG_AUDIT */
+#endif /* CONFIG_AUDIT_DEPRECATED */
