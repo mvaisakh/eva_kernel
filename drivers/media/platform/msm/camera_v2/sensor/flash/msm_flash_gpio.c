@@ -237,6 +237,9 @@ static int32_t msm_flash_init_prepare(
 	struct msm_flash_ctrl_t *flash_ctrl,
 	struct msm_flash_cfg_data_t *flash_data)
 {
+#ifdef CONFIG_MONTANA_DTB
+   return msm_flash_init(flash_ctrl, flash_data);
+#else
 	struct msm_flash_cfg_data_t flash_data_k;
 	struct msm_flash_init_info_t flash_init_info;
 	int32_t i = 0;
@@ -259,6 +262,7 @@ static int32_t msm_flash_init_prepare(
 	}
 
 	return msm_flash_init(flash_ctrl, &flash_data_k);
+#endif
 }
 
 static int32_t msm_flash_low(
