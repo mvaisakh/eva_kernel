@@ -25,6 +25,8 @@
 #define NUM_OF_PENTRY 3 /* number of variables for ptable node */
 #define NUM_OF_EENTRY 2 /* number of variables for enable node */
 
+extern struct cpu_pwr_stats *get_cpu_pwr_stats(void);
+
 enum arg_offset {
 	CPU_OFFSET,
 	FREQ_OFFSET,
@@ -40,6 +42,12 @@ struct core_debug {
 	struct cpu_pstate_pwr *driver_data;
 	int driver_len;
 };
+
+// static struct cpu_pwr_stats cpu_stats[NR_CPUS];
+// struct cpu_pwr_stats *get_cpu_pwr_stats(void)
+// {
+// 	return cpu_stats;
+// }
 
 static DEFINE_PER_CPU(struct core_debug, c_dgfs);
 static struct cpu_pwr_stats *msm_core_data;
