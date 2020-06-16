@@ -48,6 +48,8 @@ static void remove_safetynet_flags(char *cmd)
 
 static int __init proc_cmdline_init(void)
 {
+	char *offset_addr, *cmd = new_command_line;
+	
 	strcpy(new_command_line, saved_command_line);
 
 	/*
@@ -55,8 +57,6 @@ static int __init proc_cmdline_init(void)
 	 * pass SafetyNet CTS check.
 	 */
 	remove_safetynet_flags(new_command_line);
-
-	char *offset_addr, *cmd = new_command_line;
 
 	strcpy(cmd, saved_command_line);
 
