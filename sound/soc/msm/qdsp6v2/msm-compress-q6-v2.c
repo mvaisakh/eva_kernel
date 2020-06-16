@@ -1949,8 +1949,6 @@ static int msm_compr_trigger(struct snd_compr_stream *cstream, int cmd)
 	unsigned long flags;
 	int stream_id;
 	uint32_t stream_index;
-	union snd_codec_options *codec_options =
-		&(prtd->codec_param.codec.options);
 	uint16_t bits_per_sample = COMPRESS_DECODER_OUTPUT_BIT_WIDTH;
 
 	spin_lock_irqsave(&prtd->lock, flags);
