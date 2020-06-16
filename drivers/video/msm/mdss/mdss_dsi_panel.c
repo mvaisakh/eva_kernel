@@ -39,9 +39,6 @@
 #define MDSS_PANEL_UNKNOWN_NAME "unknown"
 
 #include <linux/proc_fs.h>
-static struct proc_dir_entry * d_entry;
-static struct proc_dir_entry *d_entry_frame_count;
-static char  module_name[50]={"0"};
 extern u32 moto_frame_count;/*pan*/
 
 #ifdef CONFIG_POWERSUSPEND
