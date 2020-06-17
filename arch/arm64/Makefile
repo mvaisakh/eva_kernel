@@ -74,6 +74,10 @@ ifeq ($(CONFIG_BUILD_ARM64_APPENDED_DTB_IMAGE),y)
 KBUILD_IMAGE   := $(addsuffix -dtb,$(KBUILD_IMAGE))
 endif
 
+ifeq ($(CONFIG_ARCH_MSM8937), y)
+KBUILD_CFLAGS	+= -mcpu=cortex-a53
+endif
+
 KBUILD_DTBS	:= dtbs
 
 all:	$(KBUILD_IMAGE) $(KBUILD_DTBS)
